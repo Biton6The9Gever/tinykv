@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 
+
 typedef enum 
 {
     SET,
@@ -13,6 +14,6 @@ typedef enum
 }command_t;
 
 void parse_command(char *input);
-command_t get_command(char *input)
+command_t get_command(char *input);
 
 #endif // PARSER_H

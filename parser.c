@@ -11,7 +11,8 @@ void parse_command(char *input)
 }
 command_t get_command(char *input)
 {
-    
-    printf("Nate Higgerson");
+    char cmd[6];
+    sscanf(input,"%6s",cmd);
+    printf("COMMAND: %s \n",cmd);
     return (command_t)SET;
 }
