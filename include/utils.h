@@ -8,5 +8,6 @@
 #define RESOLVE(S) FORMAT(S)
 
 char* point_to_start(char* str);
-
+// point to the first space of a string
+char* point_to_space(char* str);
 #endif // UTILS_H
