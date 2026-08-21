@@ -5,20 +5,29 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct db_node {
-    char key[MAX_KEY_LEN];
-    char val[MAX_VAL_LEN];
-    struct db_node *next;
-} db_node;
+typedef struct node {
+    char *key;
+    char *val;
+    struct node *next;
+} node;
 
 typedef struct {
-    db_node *buckets[1];
+    node **buckets;
+    size_t capacity;
     size_t total_entries;
-} Database;
+} hashMap;
 
-int db_init(Database *db);
+hashMap* mp_init();
 
+void setNode(node* node,char *key, char *val);
 
-int db_add_item(Database *db, char *key, char *val);
+int mp_add_item(hashMap *mp, char *key, char *val);
 
+void mp_resize(hashMap *mp, size_t new_capacity);
+
+int mp_set(hashMap *mp, char *key, char *val);
+
+unsigned long hash_func(const char *str);
+
+void mp_print(hashMap *mp);
 #endif

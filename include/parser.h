@@ -13,13 +13,15 @@ typedef enum
     DELETE_CMD,
     QUIT_CMD,
     INVALID_CMD
-}Command_t;
+}command_t;
 
 // Main function which parse the input
-void parse_command(char *input , Database *db);
+void parse_command(char *input , hashMap *db);
 // Extract the command from the input
-Command_t get_command(char *input);
+command_t get_command(char *input);
 // Apply the SET command
-void parse_set(char *input , Database *db);
+void parse_set(char *input , hashMap *db);
+
+
 
 #endif // PARSER_H

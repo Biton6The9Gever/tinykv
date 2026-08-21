@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -pedantic -std=c11 -MMD -MP -Iinclude
+CFLAGS = -Wall -Wextra -Werror -pedantic -std=c11 -MMD -MP -Iinclude -D_POSIX_C_SOURCE=200809L
 TARGET = main
 
 SRC_DIR = src
