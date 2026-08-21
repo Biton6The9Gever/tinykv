@@ -5,8 +5,8 @@ void parse_command(char *input , hashMap *db)
     if(!db) return; //problemo el code
 
     //remove unnecessary whitespaces in the begging of the cmd
-    input=point_to_start(input);
-    command_t cmd=get_command(input);
+    input = point_to_start(input);
+    command_t cmd = get_command(input);
     switch (cmd)
     {
         case SET_CMD:
@@ -35,27 +35,26 @@ command_t get_command(char *input)
 
 void parse_set(char *input , hashMap *db)
 { 
-    printf("################");
     char *ptr = input;
 
     ptr = point_to_space(ptr);
-    ptr=point_to_start(ptr);
+    ptr = point_to_start(ptr);
 
     if(is_empty_str(ptr,"not enough arguments were given")) return;
 
     //find end of key
     char *key_start=ptr;
-    ptr=point_to_space(ptr);
-    size_t key_len=ptr-key_start;
+    ptr = point_to_space(ptr);
+    size_t key_len = ptr-key_start;
 
     // find end of val
-    ptr=point_to_start(ptr);
+    ptr = point_to_start(ptr);
 
     if(is_empty_str(ptr,"not enough arguments were given")) return;
 
-    char *val_start =ptr;
-    ptr= point_to_space(ptr);
-    size_t val_len= ptr -val_start;
+    char *val_start = ptr;
+    ptr = point_to_space(ptr);
+    size_t val_len = ptr -val_start;
 
     char *key = strndup(key_start, key_len);
     char *val = strndup(val_start, val_len);

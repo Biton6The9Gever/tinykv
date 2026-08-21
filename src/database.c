@@ -97,13 +97,16 @@ void mp_print(hashMap *mp)
     for(size_t i=0; i<mp->capacity;i++)
     {
         node *curr = mp->buckets[i];
-        printf("[ %zu ]", i);
-        while(curr)
+        if(curr)
         {
-            printf(" -> [key: \" %s \"], [val: \" %s \"]",curr->key,curr->val);
-            curr = curr->next;
+            printf("[ %zu ]", i);
+            while(curr)
+            {
+                printf(" -> [key: \" %s \"], [val: \" %s \"]",curr->key,curr->val);
+                curr = curr->next;
+            }
+            printf(" -> NULL\n");
         }
-        printf(" -> NULL\n");
     }
 }
 
