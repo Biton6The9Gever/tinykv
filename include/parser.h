@@ -15,13 +15,15 @@ typedef enum
     INVALID_CMD
 }command_t;
 
-// Main function which parse the input
+// main function which parse the input
 void parse_command(char *input , hashMap *db);
-// Extract the command from the input
+// extract the command from the input
 command_t get_command(char *input);
-// Apply the SET command
+// apply the SET command
 void parse_set(char *input , hashMap *db);
+// apply the QUIT command
+void parse_quit();
 
-
+void parse_get(char *input,hashMap *db);
 
 #endif // PARSER_H

@@ -27,6 +27,8 @@ void mp_resize(hashMap *mp, size_t new_capacity);
 
 int mp_set(hashMap *mp, char *key, char *val);
 
+char *mp_get(hashMap *mp,char *key);
+
 unsigned long hash_func(const char *str);
 
 void mp_print(hashMap *mp);

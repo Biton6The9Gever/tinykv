@@ -24,7 +24,7 @@ void setNode(node* node,char *key, char *val)
 
 int mp_add_item(hashMap *mp, char *key, char *val)
 {
-    if(mp == NULL) return 0;
+    if(!mp) return 0;
 
     // intializing the item node
     node *item= (node *)malloc(sizeof(node));
@@ -102,13 +102,27 @@ void mp_print(hashMap *mp)
             printf("[ %zu ]", i);
             while(curr)
             {
-                printf(" -> [key: \" %s \"], [val: \" %s \"]",curr->key,curr->val);
+                printf(" -> [key: \"%s\"], [val: \"%s\"]",curr->key,curr->val);
                 curr = curr->next;
             }
             printf(" -> NULL\n");
         }
     }
 }
+
+char *mp_get(hashMap *mp,char *key) {
+    size_t idx = hash_func(key) % mp->capacity;
+    node *curr = mp->buckets[idx];
+
+    while (curr) {
+        if (strcmp(curr->key, key) == 0) {
+            return curr->val;
+        }
+        curr = curr->next;
+    }
+    return NULL;
+}
+
 
 unsigned long hash_func(const char *str)
 {

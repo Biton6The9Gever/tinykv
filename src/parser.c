@@ -12,7 +12,11 @@ void parse_command(char *input , hashMap *db)
         case SET_CMD:
             parse_set(input,db);
             break;
+        case GET_CMD:
+            parse_get(input,db);
+            break;
         case QUIT_CMD:
+            parse_quit();
             break;
         default:
             print_err("unknown command");
@@ -69,5 +73,30 @@ void parse_set(char *input , hashMap *db)
 
     free(key);
     free(val);
+}
+
+void parse_get(char *input,hashMap *db)
+{
+    char *ptr = input;
+    ptr = point_to_space(ptr);
+    ptr = point_to_start(ptr);
+
+    if(is_empty_str(ptr,"not enough arguments were given")) return;
+
+    //find end of key
+    char *key_start=ptr;
+    ptr = point_to_space(ptr);
+    size_t key_len = ptr-key_start;
+
+    char *key = strndup(key_start, key_len);
+    char *val = mp_get(db, key);
+    if(!val) print_err("no value for this key");
+
+}
+
+void parse_quit()
+{
+    //todo save the db into a file 
+    exit(0);
 }
 
