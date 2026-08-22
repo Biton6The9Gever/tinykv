@@ -1,8 +1,7 @@
 #include "parser.h"
 
-void parse_command(char *input , hashMap *db)
+bool parse_command(char *input , hashMap *db)
 {
-    if(!db) return; //problemo el code
 
     //remove unnecessary whitespaces in the begging of the cmd
     input = point_to_start(input);
@@ -10,16 +9,17 @@ void parse_command(char *input , hashMap *db)
     switch (cmd)
     {
         case SET_CMD:
-            parse_set(input,db);
+            return parse_set(input,db);
             break;
         case GET_CMD:
-            parse_get(input,db);
+            return parse_get(input,db);
             break;
         case QUIT_CMD:
-            parse_quit();
+            return quit(db);
             break;
         default:
             print_err("unknown command");
+            return true;
             break;
     }
 }
@@ -37,14 +37,14 @@ command_t get_command(char *input)
     return INVALID_CMD;
 }
 
-void parse_set(char *input , hashMap *db)
+bool parse_set(char *input , hashMap *db)
 { 
     char *ptr = input;
 
     ptr = point_to_space(ptr);
     ptr = point_to_start(ptr);
 
-    if(is_empty_str(ptr,"not enough arguments were given")) return;
+    if(is_empty_str(ptr,"not enough arguments were given")) return true;
 
     //find end of key
     char *key_start=ptr;
@@ -54,7 +54,7 @@ void parse_set(char *input , hashMap *db)
     // find end of val
     ptr = point_to_start(ptr);
 
-    if(is_empty_str(ptr,"not enough arguments were given")) return;
+    if(is_empty_str(ptr,"not enough arguments were given")) return true;
 
     char *val_start = ptr;
     ptr = point_to_space(ptr);
@@ -66,37 +66,49 @@ void parse_set(char *input , hashMap *db)
     if (!key || !val) {
         free(key);
         free(val);
-        return;
+        print_err("error proccesing SET command");
+        return true;
     }
 
     mp_set(db, key, val);
 
     free(key);
     free(val);
+    return true;
 }
 
-void parse_get(char *input,hashMap *db)
+bool parse_get(char *input,hashMap *db)
 {
     char *ptr = input;
     ptr = point_to_space(ptr);
     ptr = point_to_start(ptr);
 
-    if(is_empty_str(ptr,"not enough arguments were given")) return;
+    if(is_empty_str(ptr,"not enough arguments were given")) return true;
 
     //find end of key
     char *key_start=ptr;
     ptr = point_to_space(ptr);
     size_t key_len = ptr-key_start;
-
     char *key = strndup(key_start, key_len);
+    if(!key)
+    {
+        print_err("allocation failed");
+        return true;
+    } 
+
     char *val = mp_get(db, key);
     if(!val) print_err("no value for this key");
 
+    printf("val: \"%s\"",val);
+    free(key);
+    return true;
 }
 
-void parse_quit()
+bool quit(hashMap *db)
 {
-    //todo save the db into a file 
-    exit(0);
+    //todo save the db into a file
+    save_database(db,"database"); 
+    free(db);
+    return false;
 }
 

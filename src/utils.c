@@ -28,7 +28,12 @@ int is_empty_str(char *str ,char *msg)
     return 0;
 }
 
-void print_err(char *message)
+void print_err(char *err)
 {
-    fprintf(stderr,"tinykv> %s \n", message);
+    fprintf(stderr,"tinykv> %s \n", err);
+}
+
+void print_msg(char *msg)
+{
+    fprintf(stdout,"tinykv> %s \n", msg);
 }

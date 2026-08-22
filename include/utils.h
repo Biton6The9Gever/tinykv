@@ -12,7 +12,8 @@ char* point_to_start(char* str);
 // point to the first space of a string
 char* point_to_space(char* str);
 
-void print_err(char *message);
+void print_err(char *err);
+void print_msg(char *msg);
 
 int is_empty_str(char *str ,char *msg);
 #endif // UTILS_H

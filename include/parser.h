@@ -5,6 +5,7 @@
 #include "database.h"
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
 
 typedef enum 
 {
@@ -16,14 +17,14 @@ typedef enum
 }command_t;
 
 // main function which parse the input
-void parse_command(char *input , hashMap *db);
+bool parse_command(char *input , hashMap *db);
 // extract the command from the input
 command_t get_command(char *input);
 // apply the SET command
-void parse_set(char *input , hashMap *db);
+bool parse_set(char *input , hashMap *db);
 // apply the QUIT command
-void parse_quit();
+bool quit();
 
-void parse_get(char *input,hashMap *db);
+bool parse_get(char *input,hashMap *db);
 
 #endif // PARSER_H

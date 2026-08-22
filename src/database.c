@@ -123,6 +123,13 @@ char *mp_get(hashMap *mp,char *key) {
     return NULL;
 }
 
+int save_database(hashMap *mp, char* file_name)
+{
+    mp=mp;
+    printf("tinykv> database saved into %s.txt",file_name);
+    return 1;
+    /*TODO*/
+}
 
 unsigned long hash_func(const char *str)
 {
