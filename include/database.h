@@ -32,9 +32,9 @@ int mp_set(hashMap *mp, char *key, char *val);
 
 char *mp_get(hashMap *mp,char *key);
 
-int save_database(hashMap *mp, char* file_name);
+int save_database(hashMap *mp, char* name);
 
 unsigned long hash_func(const char *str);
 
-void mp_print(hashMap *mp);
+void mp_print(hashMap *mp,FILE *output_stream);
 #endif

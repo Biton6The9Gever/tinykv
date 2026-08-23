@@ -12,7 +12,6 @@ int lunch()
         }
         printf("tinykv> ");
     }
-    
     mp_free(db);
     return 0;
 }

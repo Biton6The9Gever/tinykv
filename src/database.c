@@ -90,7 +90,7 @@ void mp_free(hashMap *mp)
     free(mp);
 }
 
-void mp_print(hashMap *mp)
+void mp_print(hashMap *mp,FILE *output_stream)
 {
     if(!mp) return;
 
@@ -99,13 +99,13 @@ void mp_print(hashMap *mp)
         node *curr = mp->buckets[i];
         if(curr)
         {
-            printf("[ %zu ]", i);
+            fprintf(output_stream,"[ %zu ]", i);
             while(curr)
             {
-                printf(" -> [key: \"%s\"], [val: \"%s\"]",curr->key,curr->val);
+                fprintf(output_stream, " -> [key: \"%s\"], [val: \"%s\"]", curr->key, curr->val);
                 curr = curr->next;
             }
-            printf(" -> NULL\n");
+           fprintf(output_stream," -> NULL\n");
         }
     }
 }
@@ -123,12 +123,33 @@ char *mp_get(hashMap *mp,char *key) {
     return NULL;
 }
 
-int save_database(hashMap *mp, char* file_name)
+int save_database(hashMap *mp, char* name)
 {
-    mp=mp;
-    printf("tinykv> database saved into %s.txt \n",file_name);
+    // +4 for .txt and +1 for \0
+    size_t required_size = strlen(name) + 5;
+    
+    char *file_name = malloc(required_size);
+    if (file_name == NULL) {
+        print_err("memory allocation failed");
+        return 0; 
+    }
+    
+    snprintf(file_name, required_size, "%s.txt", name);
+    
+    FILE *mp_file = fopen(file_name, "w");
+    if (mp_file == NULL) {
+        fprintf(stderr,"tinykv> error could not create file %s\n", file_name);
+        free(file_name);
+        return 0; 
+    }
+    
+    mp_print(mp, mp_file);
+    fclose(mp_file);
+
+    printf("tinykv> database saved into %s \n", file_name);
+    free(file_name);
+    
     return 1;
-    /*TODO*/
 }
 
 unsigned long hash_func(const char *str)
