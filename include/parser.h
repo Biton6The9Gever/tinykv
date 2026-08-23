@@ -13,7 +13,8 @@ typedef enum
     GET_CMD,
     DELETE_CMD,
     QUIT_CMD,
-    INVALID_CMD
+    INVALID_CMD,
+    EMPTY_CMD
 }command_t;
 
 // main function which parse the input

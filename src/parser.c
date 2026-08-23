@@ -17,6 +17,9 @@ bool parse_command(char *input , hashMap *db)
         case QUIT_CMD:
             return quit(db);
             break;
+        case EMPTY_CMD:
+            return true;
+            break;
         default:
             print_err("unknown command");
             return true;
@@ -27,7 +30,9 @@ bool parse_command(char *input , hashMap *db)
 command_t get_command(char *input)
 {   
     char cmd[MAX_CMD_LEN + 1];
-    sscanf(input, RESOLVE(MAX_CMD_LEN), cmd);
+    if(sscanf(input, RESOLVE(MAX_CMD_LEN), cmd)!=1){
+        return EMPTY_CMD;
+    }
 
     if (strcmp(cmd, "SET") == 0) return SET_CMD;
     if (strcmp(cmd, "GET") == 0) return GET_CMD;
@@ -97,9 +102,13 @@ bool parse_get(char *input,hashMap *db)
     } 
 
     char *val = mp_get(db, key);
-    if(!val) print_err("no value for this key");
+    if(!val)
+    {
+        print_err("no value for this key");
+        return true;
+    } 
 
-    printf("val: \"%s\"",val);
+    printf("val: \"%s\"\n",val);
     free(key);
     return true;
 }
@@ -108,7 +117,6 @@ bool quit(hashMap *db)
 {
     //todo save the db into a file
     save_database(db,"database"); 
-    free(db);
     return false;
 }
 
