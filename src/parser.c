@@ -17,6 +17,9 @@ bool parse_command(char *input , hashMap *db)
         case QUIT_CMD:
             return quit(db);
             break;
+        case DELETE_CMD:
+            return parse_delete(input,db);
+            break;
         case EMPTY_CMD:
             return true;
             break;
@@ -42,36 +45,16 @@ command_t get_command(char *input)
     return INVALID_CMD;
 }
 
-bool parse_set(char *input , hashMap *db)
-{ 
+bool parse_set(char *input, hashMap *db)
+{
     char *ptr = input;
 
-    ptr = point_to_space(ptr);
-    ptr = point_to_start(ptr);
+    char *key = get_arg(&ptr);
+    if (!key) return true;
 
-    if(is_empty_str(ptr,"not enough arguments were given")) return true;
-
-    //find end of key
-    char *key_start=ptr;
-    ptr = point_to_space(ptr);
-    size_t key_len = ptr-key_start;
-
-    // find end of val
-    ptr = point_to_start(ptr);
-
-    if(is_empty_str(ptr,"not enough arguments were given")) return true;
-
-    char *val_start = ptr;
-    ptr = point_to_space(ptr);
-    size_t val_len = ptr -val_start;
-
-    char *key = strndup(key_start, key_len);
-    char *val = strndup(val_start, val_len);
-
-    if (!key || !val) {
+    char *val = get_arg(&ptr);
+    if (!val) {
         free(key);
-        free(val);
-        print_err("error proccesing SET command");
         return true;
     }
 
@@ -82,41 +65,73 @@ bool parse_set(char *input , hashMap *db)
     return true;
 }
 
-bool parse_get(char *input,hashMap *db)
+bool parse_get(char *input, hashMap *db)
 {
     char *ptr = input;
-    ptr = point_to_space(ptr);
-    ptr = point_to_start(ptr);
 
-    if(is_empty_str(ptr,"not enough arguments were given")) return true;
-
-    //find end of key
-    char *key_start=ptr;
-    ptr = point_to_space(ptr);
-    size_t key_len = ptr-key_start;
-    char *key = strndup(key_start, key_len);
-    if(!key)
-    {
-        print_err("allocation failed");
-        return true;
-    } 
+    char *key = get_arg(&ptr);
+    if (!key) return true;
 
     char *val = mp_get(db, key);
-    if(!val)
-    {
+    if (!val) {
         print_err("no value for this key");
+        free(key);
         return true;
-    } 
+    }
 
-    printf("val: \"%s\"\n",val);
+    printf("val: \"%s\"\n", val);
     free(key);
     return true;
 }
 
 bool quit(hashMap *db)
 {
-    //todo save the db into a file
     save_database(db,"database"); 
     return false;
 }
+
+bool parse_delete(char *input, hashMap *db)
+{
+    char *ptr = input;
+
+    char *key = get_arg(&ptr);
+    if (!key) return true;
+
+    if (!mp_delete(db, key)) {
+        print_err("key not found");
+    } else {
+        printf("OK\n");
+    }
+
+    free(key);
+    return true;
+}
+
+char* get_arg(char **input_ptr)
+{
+    if (!input_ptr || !*input_ptr) return NULL;
+
+    char *ptr = point_to_space(*input_ptr);
+    ptr = point_to_start(ptr);
+
+    if (is_empty_str(ptr, "not enough arguments were given")) {
+        *input_ptr = ptr;
+        return NULL;
+    }
+
+    char *arg_start = ptr;
+    ptr = point_to_space(ptr);
+    size_t arg_len = ptr - arg_start;
+
+    char *arg = strndup(arg_start, arg_len);
+    if (!arg) {
+        print_err("allocation failed");
+        return NULL;
+    }
+
+    // update the pointer to the end of the argument
+    *input_ptr = ptr;
+    return arg;
+}
+
 

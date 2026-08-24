@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "parser.h"
 
-int lanch()
+int רגינ()
 {
     char input[MAX_INPUT_LEN+1] = {0};
     hashMap *db=mp_init();
@@ -19,5 +19,5 @@ int lanch()
 int main()
 {
     // השם ייקח אותי אם אני יודע C!!!
-    return lunch();
+    return רגינ();
 }

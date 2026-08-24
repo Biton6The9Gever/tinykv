@@ -70,6 +70,41 @@ int mp_set(hashMap *mp, char *key, char *val)
     return 1;
 }
 
+bool mp_delete(hashMap *mp, char *key)
+{
+    if (!mp || !key || mp->capacity == 0) return false;
+
+    size_t idx = hash_func(key) % mp->capacity;
+    node *curr = mp->buckets[idx];
+    node *prev = NULL;
+
+    while (curr) 
+    {
+        if (strcmp(curr->key, key) == 0)
+        {
+            if (prev == NULL)
+            {
+                mp->buckets[idx] = curr->next;
+            } 
+            else
+            {
+                prev->next = curr->next;
+            }
+
+            free(curr->key);
+            free(curr->val);
+            free(curr);
+
+            if (mp->total_entries > 0) mp->total_entries--;
+            return true;
+        }
+        prev = curr;
+        curr = curr->next;
+    }
+
+    return false; 
+}
+
 void mp_free(hashMap *mp)
 {
     if(!mp) return;

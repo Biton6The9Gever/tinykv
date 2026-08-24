@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 typedef struct node {
     char *key;
@@ -32,9 +33,12 @@ int mp_set(hashMap *mp, char *key, char *val);
 
 char *mp_get(hashMap *mp,char *key);
 
+bool mp_delete(hashMap *mp,char *key);
+
 int save_database(hashMap *mp, char* name);
 
 unsigned long hash_func(const char *str);
 
 void mp_print(hashMap *mp,FILE *output_stream);
+
 #endif

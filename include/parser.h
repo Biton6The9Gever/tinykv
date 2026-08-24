@@ -28,4 +28,8 @@ bool quit();
 
 bool parse_get(char *input,hashMap *db);
 
+bool parse_delete(char *input,hashMap *db);
+
+char* get_arg(char **input_ptr);
+
 #endif // PARSER_H
