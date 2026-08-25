@@ -25,5 +25,5 @@ $(OBJ_DIR):
 
 clean:
 	rm -rf $(OBJ_DIR) $(TARGET)
-
+	rm database.txt
 .PHONY: all clean

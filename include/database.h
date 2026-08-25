@@ -19,17 +19,17 @@ typedef struct {
     size_t total_entries;
 } hashMap;
 
-hashMap* mp_init();
+hashMap* mp_init(void);
 
-void setNode(node* node,char *key, char *val);
-
-int mp_add_item(hashMap *mp, char *key, char *val);
+bool set_node(node* node,char *key, char *val);
 
 void mp_free(hashMap *mp);
 
 void mp_resize(hashMap *mp, size_t new_capacity);
 
-int mp_set(hashMap *mp, char *key, char *val);
+void mp_resize(hashMap *mp, size_t new_capacity);
+
+bool mp_set(hashMap *mp, char *key, char *val);
 
 char *mp_get(hashMap *mp,char *key);
 

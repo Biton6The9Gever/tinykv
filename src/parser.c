@@ -58,7 +58,12 @@ bool parse_set(char *input, hashMap *db)
         return true;
     }
 
-    mp_set(db, key, val);
+    if(!mp_set(db, key, val))
+    {
+        free(key);
+        free(val);
+        return quit(db);
+    }
 
     free(key);
     free(val);
@@ -97,10 +102,13 @@ bool parse_delete(char *input, hashMap *db)
     char *key = get_arg(&ptr);
     if (!key) return true;
 
-    if (!mp_delete(db, key)) {
+    if (!mp_delete(db, key))
+    {
         print_err("key not found");
-    } else {
-        printf("OK\n");
+    }
+    else 
+    {
+        print_msg("Key and Val deleted succesfully");
     }
 
     free(key);

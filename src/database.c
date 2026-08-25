@@ -1,49 +1,71 @@
 #include "database.h"
 
-hashMap* mp_init()
+hashMap* mp_init(void)
 {
     hashMap *mp = malloc(sizeof(hashMap));
     if(!mp) return NULL;
+    
     mp->capacity = INITIAL_CAPACITY;
     mp->total_entries =0;
     mp->buckets= calloc(mp->capacity,sizeof(node*));
-    if (!mp->buckets) {
+
+    if (!mp->buckets)
+    {
         free(mp);
         return NULL;
     }
     return mp;
 }
 
-void setNode(node* node,char *key, char *val)
+bool set_node(node* node,char *key, char *val)
 {
     node->key = strdup(key);
     node->val = strdup(val);
+    if(!node->key || !node->val)
+    {
+        free(node->key);
+        free(node->val);
+        return false;
+    }
     node->next = NULL;
-    return;
+    return true;
 }
 
-int mp_add_item(hashMap *mp, char *key, char *val)
+
+void mp_resize(hashMap *mp, size_t new_capacity)
 {
-    if(!mp) return 0;
+    if (!mp) return;
 
-    // intializing the item node
-    node *item= (node *)malloc(sizeof(node));
-    if(!item) return 0;
+    node **new_buckets = calloc(new_capacity,sizeof(node*));
+    if(!new_buckets) return;
+    for(size_t i =0 ; i < mp->capacity; i++)
+    {
+        node *curr = mp->buckets[i];
+        while(curr)
+        {
+            node *next = curr->next;
+            
+            //re-hashing
+            size_t new_idx =hash_func(curr->key) % new_capacity;
+            curr->next = new_buckets[new_idx];
+            new_buckets[new_idx]=curr;
 
-    setNode(item,key,val);
-
-    //adding the node to the mp
-    item->next = mp->buckets[0];
-    mp->buckets[0] = item;
-    mp->total_entries++;
-
-    return 1;
+            curr=next;
+        }
+    }
+    free(mp->buckets);
+    mp->buckets = new_buckets;
+    mp->capacity = new_capacity;
 }
 
-//void mp_resize(hashMap *mp, size_t new_capacity) {/*todo*/}
-
-int mp_set(hashMap *mp, char *key, char *val)
+bool mp_set(hashMap *mp, char *key, char *val)
 {
+    if (!mp || !key || mp->capacity == 0) return false;
+
+    if ((double)(mp->total_entries + 1) / (double)mp->capacity > FACTOR_THRESHOLD)
+    {
+        mp_resize(mp, mp->capacity * 2);
+    }
     size_t idx = hash_func(key) % mp->capacity;
     node *curr = mp->buckets[idx];
 
@@ -52,22 +74,33 @@ int mp_set(hashMap *mp, char *key, char *val)
     {
         if(strcmp(curr->key,key) == 0)
         {
+            char *new_value = strdup(val);
+                if (!new_value)
+                {
+                    return 0;
+                }
+
             free(curr->val);
-            curr->val = strdup(val);
-            return 1;
+            curr->val = new_value;
+            return true;
         }
         curr = curr->next;
     }
 
     node *new_node =malloc(sizeof(node));
-    if(!new_node) return 0;
-    new_node->key =strdup(key);
-    new_node->val =strdup(val);
+    if(!new_node) return false;
+
+    if (!set_node(new_node, key, val))
+    {
+        free(new_node);
+        return false;
+    }
+
     new_node->next = mp->buckets[idx];
     mp->buckets[idx] = new_node;
     mp->total_entries++;
 
-    return 1;
+    return true;
 }
 
 bool mp_delete(hashMap *mp, char *key)
@@ -127,7 +160,7 @@ void mp_free(hashMap *mp)
 
 void mp_print(hashMap *mp,FILE *output_stream)
 {
-    if(!mp) return;
+    if (!mp || mp->capacity == 0) return;
 
     for(size_t i=0; i<mp->capacity;i++)
     {
@@ -146,11 +179,15 @@ void mp_print(hashMap *mp,FILE *output_stream)
 }
 
 char *mp_get(hashMap *mp,char *key) {
+    if (!mp || !key || mp->capacity == 0) return NULL;
+
     size_t idx = hash_func(key) % mp->capacity;
     node *curr = mp->buckets[idx];
 
-    while (curr) {
-        if (strcmp(curr->key, key) == 0) {
+    while (curr)
+    {
+        if (strcmp(curr->key, key) == 0)
+        {
             return curr->val;
         }
         curr = curr->next;
@@ -160,6 +197,8 @@ char *mp_get(hashMap *mp,char *key) {
 
 int save_database(hashMap *mp, char* name)
 {
+    if (!mp || !name || mp->capacity == 0) return false;
+    
     // +4 for .txt and +1 for \0
     size_t required_size = strlen(name) + 5;
     
